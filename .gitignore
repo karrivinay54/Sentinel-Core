@@ -17,3 +17,6 @@ Makefile
 # OS
 .DS_Store
 Thumbs.db
+
+# Generated datasets
+cpp_engine/data/*.csv
