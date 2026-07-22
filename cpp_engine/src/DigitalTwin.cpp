@@ -24,17 +24,26 @@ void DigitalTwin::update()
 {
     runningTime++;
 
-    std::uniform_real_distribution<double> tempDrift(-0.05, 0.05);
-    std::uniform_real_distribution<double> vibDrift(-0.01, 0.01);
-    std::uniform_real_distribution<double> currentDrift(-0.02, 0.02);
-    std::uniform_real_distribution<double> voltageDrift(-0.20, 0.20);
-    std::uniform_int_distribution<int> rpmDrift(-1, 1);
+    std::uniform_real_distribution<double> tempNoise(-0.05, 0.05);
+    std::uniform_real_distribution<double> vibrationNoise(-0.01, 0.01);
+    std::uniform_real_distribution<double> currentNoise(-0.02, 0.02);
+    std::uniform_real_distribution<double> voltageNoise(-0.20, 0.20);
+    std::uniform_int_distribution<int> rpmNoise(-1, 1);
 
-    temperature += tempDrift(generator);
-    vibration += vibDrift(generator);
-    current += currentDrift(generator);
-    voltage += voltageDrift(generator);
-    rpm += rpmDrift(generator);
+    temperature += tempNoise(generator)
+                 + RECOVERY_FACTOR * (TARGET_TEMPERATURE - temperature);
+
+    vibration += vibrationNoise(generator)
+               + RECOVERY_FACTOR * (TARGET_VIBRATION - vibration);
+
+    current += currentNoise(generator)
+             + RECOVERY_FACTOR * (TARGET_CURRENT - current);
+
+    voltage += voltageNoise(generator)
+             + RECOVERY_FACTOR * (TARGET_VOLTAGE - voltage);
+
+    rpm += rpmNoise(generator)
+         + static_cast<int>(0.10 * (TARGET_RPM - rpm));
 }
 
 SensorData DigitalTwin::generateReading()

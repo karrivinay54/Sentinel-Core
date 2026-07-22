@@ -2,9 +2,12 @@
 #include "../include/DigitalTwin.h"
 
 #include <iostream>
+#include <cstdio>
 
 int main()
 {
+    std::remove("cpp_engine/data/sensor_data.csv");
+    
     DigitalTwin twin("M001");
 
     CSVWriter writer("cpp_engine/data/sensor_data.csv");

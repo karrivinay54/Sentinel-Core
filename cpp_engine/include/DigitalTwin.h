@@ -21,6 +21,14 @@ private:
 
     int runningTime;
 
+    static constexpr double TARGET_TEMPERATURE = 36.8;
+    static constexpr double TARGET_VIBRATION   = 0.32;
+    static constexpr double TARGET_CURRENT     = 3.05;
+    static constexpr double TARGET_VOLTAGE     = 229.6;
+    static constexpr int    TARGET_RPM         = 1498;
+
+static constexpr double RECOVERY_FACTOR    = 0.05;
+
     std::time_t simulationStartTime;
 
     std::mt19937 generator;
