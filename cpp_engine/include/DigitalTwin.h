@@ -10,28 +10,42 @@
 class DigitalTwin
 {
 private:
+    // Machine identity
     std::string machineID;
     MachineState state;
 
+    // Current sensor values
     double temperature;
     double vibration;
     double current;
     double voltage;
     int rpm;
 
+    // Simulation
     int runningTime;
-
-    static constexpr double TARGET_TEMPERATURE = 36.8;
-    static constexpr double TARGET_VIBRATION   = 0.32;
-    static constexpr double TARGET_CURRENT     = 3.05;
-    static constexpr double TARGET_VOLTAGE     = 229.6;
-    static constexpr int    TARGET_RPM         = 1498;
-
-static constexpr double RECOVERY_FACTOR    = 0.05;
-
     std::time_t simulationStartTime;
-
     std::mt19937 generator;
+
+    // Healthy operating points
+    static constexpr double HEALTHY_TEMPERATURE = 36.8;
+    static constexpr double HEALTHY_VIBRATION   = 0.32;
+    static constexpr double HEALTHY_CURRENT     = 3.05;
+    static constexpr double HEALTHY_VOLTAGE     = 229.6;
+    static constexpr int    HEALTHY_RPM         = 1498;
+
+    // Recovery
+    static constexpr double RECOVERY_FACTOR = 0.05;
+
+    // Current operating targets
+    double targetTemperature;
+    double targetVibration;
+    double targetCurrent;
+    double targetVoltage;
+    int targetRPM;
+
+    // Internal helpers
+    void updateState();
+    void updateSensors();
 
 public:
     explicit DigitalTwin(const std::string& machineID);

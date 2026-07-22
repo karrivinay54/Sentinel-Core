@@ -7,7 +7,7 @@
 int main()
 {
     std::remove("cpp_engine/data/sensor_data.csv");
-    
+
     DigitalTwin twin("M001");
 
     CSVWriter writer("cpp_engine/data/sensor_data.csv");

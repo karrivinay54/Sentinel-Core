@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <sstream>
 #include <random>
+#include <iostream>
 
 DigitalTwin::DigitalTwin(const std::string& machineID)
     : machineID(machineID),
@@ -18,12 +19,54 @@ DigitalTwin::DigitalTwin(const std::string& machineID)
       simulationStartTime(std::time(nullptr)),
       generator(std::random_device{}())
 {
+    // Initialize operating targets to healthy values
+    targetTemperature = HEALTHY_TEMPERATURE;
+    targetVibration   = HEALTHY_VIBRATION;
+    targetCurrent     = HEALTHY_CURRENT;
+    targetVoltage     = HEALTHY_VOLTAGE;
+    targetRPM         = HEALTHY_RPM;
 }
 
 void DigitalTwin::update()
 {
     runningTime++;
 
+    updateState();
+
+    updateSensors();
+}
+
+void DigitalTwin::updateState()
+{
+    if (runningTime < 20)
+    {
+        state = MachineState::HEALTHY;
+
+        targetTemperature = HEALTHY_TEMPERATURE;
+        targetVibration   = HEALTHY_VIBRATION;
+        targetCurrent     = HEALTHY_CURRENT;
+        targetVoltage     = HEALTHY_VOLTAGE;
+        targetRPM         = HEALTHY_RPM;
+
+        std::cout << "[STATE] HEALTHY\n";
+    }
+    else
+    {
+        state = MachineState::WARNING;
+
+        targetTemperature = 37.5;
+        targetVibration   = 0.48;
+        targetCurrent     = 3.20;
+        targetVoltage     = 229.6;
+        targetRPM         = 1492;
+
+        std::cout << "[STATE] WARNING\n";
+    }
+}
+
+
+void DigitalTwin::updateSensors()
+{
     std::uniform_real_distribution<double> tempNoise(-0.05, 0.05);
     std::uniform_real_distribution<double> vibrationNoise(-0.01, 0.01);
     std::uniform_real_distribution<double> currentNoise(-0.02, 0.02);
@@ -31,19 +74,19 @@ void DigitalTwin::update()
     std::uniform_int_distribution<int> rpmNoise(-1, 1);
 
     temperature += tempNoise(generator)
-                 + RECOVERY_FACTOR * (TARGET_TEMPERATURE - temperature);
+             + RECOVERY_FACTOR * (targetTemperature - temperature);
 
     vibration += vibrationNoise(generator)
-               + RECOVERY_FACTOR * (TARGET_VIBRATION - vibration);
+           + RECOVERY_FACTOR * (targetVibration - vibration);
 
     current += currentNoise(generator)
-             + RECOVERY_FACTOR * (TARGET_CURRENT - current);
+         + RECOVERY_FACTOR * (targetCurrent - current);
 
     voltage += voltageNoise(generator)
-             + RECOVERY_FACTOR * (TARGET_VOLTAGE - voltage);
+             + RECOVERY_FACTOR * (targetVoltage - voltage);
 
     rpm += rpmNoise(generator)
-         + static_cast<int>(0.10 * (TARGET_RPM - rpm));
+         + static_cast<int>(0.10 * (targetRPM - rpm));
 }
 
 SensorData DigitalTwin::generateReading()
