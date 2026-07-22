@@ -1,4 +1,5 @@
 #include "../include/SensorData.h"
+#include "../include/CSVWriter.h"
 
 #include <iostream>
 
@@ -14,10 +15,11 @@ int main()
         1498
     );
 
-    reading.display();
+    CSVWriter writer("cpp_engine/data/sensor_data.csv");
 
-    std::cout << "\nCSV Output:\n";
-    std::cout << reading.toCSV() << '\n';
+    writer.writeData(reading);
+
+    std::cout << "Sensor data written successfully.\n";
 
     return 0;
 }
