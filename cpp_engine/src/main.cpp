@@ -1,14 +1,21 @@
-#include "../include/MachineState.h"
+#include "../include/CSVWriter.h"
+#include "../include/DigitalTwin.h"
 
 #include <iostream>
 
 int main()
 {
-    MachineState state = MachineState::HEALTHY;
+    DigitalTwin twin("M001");
 
-    std::cout << "Current Machine State : "
-              << toString(state)
-              << '\n';
+    SensorData reading = twin.generateReading();
+
+    reading.display();
+
+    CSVWriter writer("cpp_engine/data/sensor_data.csv");
+
+    writer.writeData(reading);
+
+    std::cout << "\nSensor data saved.\n";
 
     return 0;
 }
