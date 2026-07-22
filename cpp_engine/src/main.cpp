@@ -7,15 +7,22 @@ int main()
 {
     DigitalTwin twin("M001");
 
-    SensorData reading = twin.generateReading();
-
-    reading.display();
-
     CSVWriter writer("cpp_engine/data/sensor_data.csv");
 
-    writer.writeData(reading);
+    for (int i = 0; i < 20; i++)
+    {
+        twin.update();
 
-    std::cout << "\nSensor data saved.\n";
+        SensorData reading = twin.generateReading();
+
+        reading.display();
+
+        writer.writeData(reading);
+
+        std::cout << "-----------------------------\n";
+    }
+
+    std::cout << "\nSimulation completed successfully.\n";
 
     return 0;
 }
