@@ -6,6 +6,7 @@
 
 #include "MachineState.h"
 #include "SensorData.h"
+#include "FaultType.h"
 
 class DigitalTwin
 {
@@ -13,6 +14,7 @@ private:
     // Machine identity
     std::string machineID;
     MachineState state;
+    FaultType currentFault;
 
     // Current sensor values
     double temperature;
@@ -45,6 +47,8 @@ private:
 
     // Internal helpers
     void updateState();
+    void updateFault();
+    void updateTargets();
     void updateSensors();
 
 public:
@@ -53,4 +57,7 @@ public:
     void update();
 
     SensorData generateReading();
+
+    MachineState getState() const;
+    FaultType getFaultType() const;
 };

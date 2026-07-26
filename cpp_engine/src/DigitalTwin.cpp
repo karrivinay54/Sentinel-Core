@@ -10,6 +10,7 @@
 DigitalTwin::DigitalTwin(const std::string& machineID)
     : machineID(machineID),
       state(MachineState::HEALTHY),
+      currentFault(FaultType::NONE),
       temperature(36.8),
       vibration(0.32),
       current(3.05),
@@ -32,7 +33,8 @@ void DigitalTwin::update()
     runningTime++;
 
     updateState();
-
+    updateFault();
+    updateTargets();
     updateSensors();
 }
 
@@ -42,25 +44,59 @@ void DigitalTwin::updateState()
     {
         state = MachineState::HEALTHY;
 
-        targetTemperature = HEALTHY_TEMPERATURE;
-        targetVibration   = HEALTHY_VIBRATION;
-        targetCurrent     = HEALTHY_CURRENT;
-        targetVoltage     = HEALTHY_VOLTAGE;
-        targetRPM         = HEALTHY_RPM;
-
         std::cout << "[STATE] HEALTHY\n";
     }
     else
     {
         state = MachineState::WARNING;
 
-        targetTemperature = 37.5;
-        targetVibration   = 0.48;
-        targetCurrent     = 3.20;
-        targetVoltage     = 229.6;
-        targetRPM         = 1492;
-
         std::cout << "[STATE] WARNING\n";
+    }
+}
+
+void DigitalTwin::updateFault()
+{
+    if (state == MachineState::HEALTHY)
+    {
+        currentFault = FaultType::NONE;
+    }
+    else
+    {
+        currentFault = FaultType::BEARING_WEAR;
+    }
+}
+
+void DigitalTwin::updateTargets()
+{
+    if (state == MachineState::HEALTHY)
+    {
+        targetTemperature = HEALTHY_TEMPERATURE;
+        targetVibration   = HEALTHY_VIBRATION;
+        targetCurrent     = HEALTHY_CURRENT;
+        targetVoltage     = HEALTHY_VOLTAGE;
+        targetRPM         = HEALTHY_RPM;
+
+        return;
+    }
+
+    switch (currentFault)
+    {
+        case FaultType::BEARING_WEAR:
+            targetTemperature = 37.5;
+            targetVibration   = 0.48;
+            targetCurrent     = 3.20;
+            targetVoltage     = HEALTHY_VOLTAGE;
+            targetRPM         = 1492;
+            break;
+
+        case FaultType::NONE:
+        default:
+            targetTemperature = HEALTHY_TEMPERATURE;
+            targetVibration   = HEALTHY_VIBRATION;
+            targetCurrent     = HEALTHY_CURRENT;
+            targetVoltage     = HEALTHY_VOLTAGE;
+            targetRPM         = HEALTHY_RPM;
+            break;
     }
 }
 
@@ -107,4 +143,14 @@ SensorData DigitalTwin::generateReading()
         voltage,
         rpm
     );
+}
+
+MachineState DigitalTwin::getState() const
+{
+    return state;
+}
+
+FaultType DigitalTwin::getFaultType() const
+{
+    return currentFault;
 }
