@@ -2,6 +2,7 @@
 
 #include <string>
 #include "SensorData.h"
+#include "DatasetRecord.h"
 
 class CSVWriter
 {
@@ -12,4 +13,5 @@ public:
     explicit CSVWriter(const std::string& filename);
 
     void writeData(const SensorData& data);
+    void write(const DatasetRecord& record);
 };

@@ -34,3 +34,8 @@ void CSVWriter::writeData(const SensorData& data)
 
     file.close();
 }
+
+void CSVWriter::write(const DatasetRecord& record)
+{
+    writeData(record.getSensorData());
+}
