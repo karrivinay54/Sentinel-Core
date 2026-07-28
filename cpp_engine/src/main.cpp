@@ -16,11 +16,17 @@ int main()
     {
         twin.update();
 
-        SensorData reading = twin.generateReading();
+       SensorData reading = twin.generateReading();
 
-        reading.display();
+DatasetRecord record(
+    reading,
+    twin.getState(),
+    twin.getFaultType()
+);
 
-        writer.writeData(reading);
+reading.display();
+
+writer.write(record);
 
         std::cout << "-----------------------------\n";
     }
