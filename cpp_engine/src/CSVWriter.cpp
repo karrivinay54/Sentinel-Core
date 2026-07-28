@@ -8,9 +8,9 @@ CSVWriter::CSVWriter(const std::string& filename)
 {
 }
 
-void CSVWriter::writeData(const SensorData& data)
+void CSVWriter::write(const DatasetRecord& record)
 {
-    // Check if the file already exists
+    // Check if file already exists
     std::ifstream checkFile(filename);
 
     bool fileExists = checkFile.good();
@@ -19,6 +19,7 @@ void CSVWriter::writeData(const SensorData& data)
 
     std::ofstream file(filename, std::ios::app);
 
+    // Write header only once
     if (!fileExists)
     {
         file << "Timestamp,"
@@ -27,15 +28,54 @@ void CSVWriter::writeData(const SensorData& data)
              << "Vibration,"
              << "Current,"
              << "Voltage,"
-             << "RPM\n";
+             << "RPM,"
+             << "State,"
+             << "FaultType\n";
     }
 
-    file << data.toCSV() << '\n';
+    const SensorData& data = record.getSensorData();
+
+    file << data.getTimestamp() << ","
+         << data.getMachineID() << ","
+         << data.getTemperature() << ","
+         << data.getVibration() << ","
+         << data.getCurrent() << ","
+         << data.getVoltage() << ","
+         << data.getRPM() << ",";
+
+    switch (record.getMachineState())
+    {
+        case MachineState::HEALTHY:
+            file << "HEALTHY";
+            break;
+
+        case MachineState::WARNING:
+            file << "WARNING";
+            break;
+
+        case MachineState::CRITICAL:
+            file << "CRITICAL";
+            break;
+    }
+
+    file << ",";
+
+    switch (record.getFaultType())
+    {
+        case FaultType::NONE:
+            file << "NONE";
+            break;
+
+        case FaultType::BEARING_WEAR:
+            file << "BEARING_WEAR";
+            break;
+
+        default:
+            file << "UNKNOWN";
+            break;
+    }
+
+    file << '\n';
 
     file.close();
-}
-
-void CSVWriter::write(const DatasetRecord& record)
-{
-    writeData(record.getSensorData());
 }

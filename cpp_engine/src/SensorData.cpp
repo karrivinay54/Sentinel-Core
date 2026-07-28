@@ -45,6 +45,41 @@ void SensorData::display() const
     std::cout << "RPM         : " << rpm << '\n';
 }
 
+std::string SensorData::getTimestamp() const
+{
+    return timestamp;
+}
+
+std::string SensorData::getMachineID() const
+{
+    return machineID;
+}
+
+double SensorData::getTemperature() const
+{
+    return temperature;
+}
+
+double SensorData::getVibration() const
+{
+    return vibration;
+}
+
+double SensorData::getCurrent() const
+{
+    return current;
+}
+
+double SensorData::getVoltage() const
+{
+    return voltage;
+}
+
+int SensorData::getRPM() const
+{
+    return rpm;
+}
+
 // Convert to CSV format
 std::string SensorData::toCSV() const
 {
