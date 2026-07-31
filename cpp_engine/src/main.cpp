@@ -1,5 +1,6 @@
 #include "../include/CSVWriter.h"
 #include "../include/DigitalTwin.h"
+#include "../include/SimulationConfig.h"
 
 #include <iostream>
 #include <cstdio>
@@ -8,25 +9,31 @@ int main()
 {
     std::remove("cpp_engine/data/sensor_data.csv");
 
-    DigitalTwin twin("M001");
+    SimulationConfig config(
+        "M001",
+        "cpp_engine/data/sensor_data.csv",
+        50
+    );
 
-    CSVWriter writer("cpp_engine/data/sensor_data.csv");
+    DigitalTwin twin(config.getMachineID());
 
-    for (int i = 0; i < 20; i++)
+    CSVWriter writer(config.getOutputFile());
+
+    for (int i = 0; i < config.getNumIterations(); i++)
     {
         twin.update();
 
-       SensorData reading = twin.generateReading();
+        SensorData reading = twin.generateReading();
 
-DatasetRecord record(
-    reading,
-    twin.getState(),
-    twin.getFaultType()
-);
+        DatasetRecord record(
+            reading,
+            twin.getState(),
+            twin.getFaultType()
+        );
 
-reading.display();
+        reading.display();
 
-writer.write(record);
+        writer.write(record);
 
         std::cout << "-----------------------------\n";
     }
