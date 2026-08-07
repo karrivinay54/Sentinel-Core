@@ -1,8 +1,5 @@
-#include "../include/CSVWriter.h"
-#include "../include/DigitalTwin.h"
-#include "../include/SimulationConfig.h"
+#include "../include/SimulationManager.h"
 
-#include <iostream>
 #include <cstdio>
 
 int main()
@@ -15,30 +12,9 @@ int main()
         50
     );
 
-    DigitalTwin twin(config.getMachineID());
+    SimulationManager manager(config);
 
-    CSVWriter writer(config.getOutputFile());
-
-    for (int i = 0; i < config.getNumIterations(); i++)
-    {
-        twin.update();
-
-        SensorData reading = twin.generateReading();
-
-        DatasetRecord record(
-            reading,
-            twin.getState(),
-            twin.getFaultType()
-        );
-
-        reading.display();
-
-        writer.write(record);
-
-        std::cout << "-----------------------------\n";
-    }
-
-    std::cout << "\nSimulation completed successfully.\n";
+    manager.run();
 
     return 0;
 }
