@@ -5,18 +5,18 @@
 class SimulationConfig
 {
 private:
-    std::string machineID;
+    int machineCount;
     std::string outputFile;
     int numIterations;
 
 public:
     SimulationConfig(
-        const std::string& machineID,
+        int machineCount,
         const std::string& outputFile,
         int numIterations
     );
 
-    std::string getMachineID() const;
+    int getMachineCount() const;
     std::string getOutputFile() const;
     int getNumIterations() const;
 };

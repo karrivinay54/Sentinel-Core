@@ -2,19 +2,20 @@
 
 // Constructor
 SimulationConfig::SimulationConfig(
-    const std::string& machineID,
+    int machineCount,
     const std::string& outputFile,
-    int numIterations)
-    : machineID(machineID),
+    int numIterations
+)
+    : machineCount(machineCount),
       outputFile(outputFile),
       numIterations(numIterations)
 {
 }
 
-// Getter for Machine ID
-std::string SimulationConfig::getMachineID() const
+// Getter for Machine Count
+int SimulationConfig::getMachineCount() const
 {
-    return machineID;
+    return machineCount;
 }
 
 // Getter for Output File

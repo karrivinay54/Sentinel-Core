@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "SimulationConfig.h"
 #include "DigitalTwin.h"
 #include "CSVWriter.h"
@@ -8,7 +10,7 @@ class SimulationManager
 {
 private:
     SimulationConfig config;
-    DigitalTwin twin;
+    std::vector<DigitalTwin> twins;
     CSVWriter writer;
 
 public:

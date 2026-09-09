@@ -1,35 +1,49 @@
 #include "../include/SimulationManager.h"
-
 #include "../include/DatasetRecord.h"
 
 #include <iostream>
+#include <iomanip>
+#include <sstream>
 
 SimulationManager::SimulationManager(const SimulationConfig& config)
     : config(config),
-      twin(config.getMachineID()),
       writer(config.getOutputFile())
 {
+    for (int i = 1; i <= config.getMachineCount(); ++i)
+    {
+        std::ostringstream machineID;
+
+        machineID << "M"
+                  << std::setw(3)
+                  << std::setfill('0')
+                  << i;
+
+        twins.emplace_back(machineID.str());
+    }
 }
 
 void SimulationManager::run()
 {
-    for (int i = 0; i < config.getNumIterations(); i++)
+    for (int i = 0; i < config.getNumIterations(); ++i)
     {
-        twin.update();
+        for (auto& twin : twins)
+        {
+            twin.update();
 
-        SensorData reading = twin.generateReading();
+            SensorData reading = twin.generateReading();
 
-        DatasetRecord record(
-            reading,
-            twin.getState(),
-            twin.getFaultType()
-        );
+            DatasetRecord record(
+                reading,
+                twin.getState(),
+                twin.getFaultType()
+            );
 
-        reading.display();
+            reading.display();
 
-        writer.write(record);
+            writer.write(record);
 
-        std::cout << "-----------------------------\n";
+            std::cout << "-----------------------------\n";
+        }
     }
 
     std::cout << "\nSimulation completed successfully.\n";
