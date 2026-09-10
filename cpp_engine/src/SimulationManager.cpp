@@ -18,7 +18,10 @@ SimulationManager::SimulationManager(const SimulationConfig& config)
                   << std::setfill('0')
                   << i;
 
-        twins.emplace_back(machineID.str());
+        twins.emplace_back(
+            machineID.str(),
+            config.getFaultForMachine(i - 1)
+        );
     }
 }
 

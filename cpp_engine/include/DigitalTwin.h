@@ -14,6 +14,7 @@ private:
     // Machine identity
     std::string machineID;
     MachineState state;
+    FaultType assignedFault;
     FaultType currentFault;
 
     // Current sensor values
@@ -52,7 +53,10 @@ private:
     void updateSensors();
 
 public:
-    explicit DigitalTwin(const std::string& machineID);
+    DigitalTwin(
+    const std::string& machineID,
+    FaultType fault
+);
 
     void update();
 

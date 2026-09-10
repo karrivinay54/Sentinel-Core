@@ -4,11 +4,13 @@
 SimulationConfig::SimulationConfig(
     int machineCount,
     const std::string& outputFile,
-    int numIterations
+    int numIterations,
+    const std::vector<FaultType>& faultAssignments
 )
     : machineCount(machineCount),
       outputFile(outputFile),
-      numIterations(numIterations)
+      numIterations(numIterations),
+      faultAssignments(faultAssignments)
 {
 }
 
@@ -28,4 +30,15 @@ std::string SimulationConfig::getOutputFile() const
 int SimulationConfig::getNumIterations() const
 {
     return numIterations;
+}
+
+// Get fault assigned to a machine
+FaultType SimulationConfig::getFaultForMachine(int index) const
+{
+    if (index < 0 || index >= static_cast<int>(faultAssignments.size()))
+    {
+        return FaultType::NONE;
+    }
+
+    return faultAssignments[index];
 }

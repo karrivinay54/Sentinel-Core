@@ -7,9 +7,13 @@
 #include <random>
 #include <iostream>
 
-DigitalTwin::DigitalTwin(const std::string& machineID)
+DigitalTwin::DigitalTwin(
+    const std::string& machineID,
+    FaultType fault
+)
     : machineID(machineID),
       state(MachineState::HEALTHY),
+      assignedFault(fault),
       currentFault(FaultType::NONE),
       temperature(36.8),
       vibration(0.32),
@@ -62,7 +66,7 @@ void DigitalTwin::updateFault()
     }
     else
     {
-        currentFault = FaultType::BEARING_WEAR;
+        currentFault = assignedFault;
     }
 }
 

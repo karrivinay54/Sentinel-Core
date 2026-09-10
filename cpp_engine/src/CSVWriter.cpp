@@ -1,6 +1,7 @@
 #include "../include/CSVWriter.h"
 
 #include <fstream>
+#include <iostream>
 
 // Constructor
 CSVWriter::CSVWriter(const std::string& filename)
@@ -12,9 +13,7 @@ void CSVWriter::write(const DatasetRecord& record)
 {
     // Check if file already exists
     std::ifstream checkFile(filename);
-
     bool fileExists = checkFile.good();
-
     checkFile.close();
 
     std::ofstream file(filename, std::ios::app);
@@ -43,8 +42,17 @@ void CSVWriter::write(const DatasetRecord& record)
          << data.getVoltage() << ","
          << data.getRPM() << ",";
 
+    // Write Machine State
     switch (record.getMachineState())
     {
+        case MachineState::OFF:
+            file << "OFF";
+            break;
+
+        case MachineState::STARTING:
+            file << "STARTING";
+            break;
+
         case MachineState::HEALTHY:
             file << "HEALTHY";
             break;
@@ -53,13 +61,26 @@ void CSVWriter::write(const DatasetRecord& record)
             file << "WARNING";
             break;
 
+        case MachineState::FAULT:
+            file << "FAULT";
+            break;
+
         case MachineState::CRITICAL:
             file << "CRITICAL";
+            break;
+
+        case MachineState::SHUTDOWN:
+            file << "SHUTDOWN";
+            break;
+
+        default:
+            file << "UNKNOWN";
             break;
     }
 
     file << ",";
 
+    // Write Fault Type
     switch (record.getFaultType())
     {
         case FaultType::NONE:
@@ -70,12 +91,23 @@ void CSVWriter::write(const DatasetRecord& record)
             file << "BEARING_WEAR";
             break;
 
+        case FaultType::MISALIGNMENT:
+            file << "MISALIGNMENT";
+            break;
+
+        case FaultType::COOLING_FAILURE:
+            file << "COOLING_FAILURE";
+            break;
+
+        case FaultType::OVERLOAD:
+            file << "OVERLOAD";
+            break;
+
         default:
             file << "UNKNOWN";
             break;
     }
 
     file << '\n';
-
     file.close();
 }
