@@ -1,5 +1,6 @@
 #include "../include/DigitalTwin.h"
 
+#include <cmath>
 #include <chrono>
 #include <ctime>
 #include <iomanip>
@@ -21,6 +22,7 @@ DigitalTwin::DigitalTwin(
       voltage(229.6),
       rpm(1498),
       runningTime(0),
+      degradationLevel(0.0),
       simulationStartTime(std::time(nullptr)),
       generator(std::random_device{}())
 {
@@ -35,7 +37,7 @@ DigitalTwin::DigitalTwin(
 void DigitalTwin::update()
 {
     runningTime++;
-
+    updateDegradation();
     updateState();
     updateFault();
     updateTargets();
@@ -44,18 +46,64 @@ void DigitalTwin::update()
 
 void DigitalTwin::updateState()
 {
-    if (runningTime < 20)
+    if (degradationLevel < 0.40)
     {
         state = MachineState::HEALTHY;
-
-        std::cout << "[STATE] HEALTHY\n";
+    }
+    else if (degradationLevel < 0.70)
+    {
+        state = MachineState::WARNING;
+    }
+    else if (degradationLevel < 0.90)
+    {
+        state = MachineState::FAULT;
     }
     else
     {
-        state = MachineState::WARNING;
-
-        std::cout << "[STATE] WARNING\n";
+        state = MachineState::CRITICAL;
     }
+
+    std::cout << "[STATE] ";
+
+    switch (state)
+    {
+        case MachineState::HEALTHY:
+            std::cout << "HEALTHY";
+            break;
+
+        case MachineState::WARNING:
+            std::cout << "WARNING";
+            break;
+
+        case MachineState::FAULT:
+            std::cout << "FAULT";
+            break;
+
+        case MachineState::CRITICAL:
+            std::cout << "CRITICAL";
+            break;
+
+        default:
+            std::cout << "UNKNOWN";
+            break;
+    }
+
+    std::cout << "\n";
+}
+
+void DigitalTwin::updateDegradation()
+{
+    const double DEGRADATION_RATE = 0.02;
+
+    degradationLevel += DEGRADATION_RATE;
+
+    if (degradationLevel > 1.0)
+    {
+        degradationLevel = 1.0;
+    }
+
+    std::cout << "[DEGRADATION] Level: "
+              << degradationLevel << "\n";
 }
 
 void DigitalTwin::updateFault()
@@ -79,19 +127,97 @@ void DigitalTwin::updateTargets()
         targetCurrent     = HEALTHY_CURRENT;
         targetVoltage     = HEALTHY_VOLTAGE;
         targetRPM         = HEALTHY_RPM;
-
         return;
     }
 
     switch (currentFault)
     {
         case FaultType::BEARING_WEAR:
-            targetTemperature = 37.5;
-            targetVibration   = 0.48;
-            targetCurrent     = 3.20;
-            targetVoltage     = HEALTHY_VOLTAGE;
-            targetRPM         = 1492;
+            targetTemperature =
+                HEALTHY_TEMPERATURE +
+                degradationLevel * (37.5 - HEALTHY_TEMPERATURE);
+
+            targetVibration =
+                HEALTHY_VIBRATION +
+                degradationLevel * (0.48 - HEALTHY_VIBRATION);
+
+            targetCurrent =
+                HEALTHY_CURRENT +
+                degradationLevel * (3.20 - HEALTHY_CURRENT);
+
+            targetVoltage = HEALTHY_VOLTAGE;
+
+            targetRPM =
+                HEALTHY_RPM +
+                static_cast<int>(
+                    degradationLevel * (1492 - HEALTHY_RPM)
+                );
             break;
+
+
+        case FaultType::MISALIGNMENT:
+            targetTemperature =
+                HEALTHY_TEMPERATURE +
+                degradationLevel * (37.8 - HEALTHY_TEMPERATURE);
+
+            targetVibration =
+                HEALTHY_VIBRATION +
+                degradationLevel * (0.65 - HEALTHY_VIBRATION);
+
+            targetCurrent =
+                HEALTHY_CURRENT +
+                degradationLevel * (3.25 - HEALTHY_CURRENT);
+
+            targetVoltage = HEALTHY_VOLTAGE;
+
+            targetRPM =
+                HEALTHY_RPM +
+                static_cast<int>(
+                    degradationLevel * (1490 - HEALTHY_RPM)
+                );
+            break;
+
+
+        case FaultType::COOLING_FAILURE:
+            targetTemperature =
+                HEALTHY_TEMPERATURE +
+                degradationLevel * (42.0 - HEALTHY_TEMPERATURE);
+
+            targetVibration = HEALTHY_VIBRATION;
+
+            targetCurrent =
+                HEALTHY_CURRENT +
+                degradationLevel * (3.20 - HEALTHY_CURRENT);
+
+            targetVoltage = HEALTHY_VOLTAGE;
+            targetRPM = HEALTHY_RPM;
+            break;
+
+
+        case FaultType::OVERLOAD:
+            targetTemperature =
+                HEALTHY_TEMPERATURE +
+                degradationLevel * (39.0 - HEALTHY_TEMPERATURE);
+
+            targetVibration =
+                HEALTHY_VIBRATION +
+                degradationLevel * (0.40 - HEALTHY_VIBRATION);
+
+            targetCurrent =
+                HEALTHY_CURRENT +
+                degradationLevel * (4.50 - HEALTHY_CURRENT);
+
+            targetVoltage =
+                HEALTHY_VOLTAGE +
+                degradationLevel * (225.0 - HEALTHY_VOLTAGE);
+
+            targetRPM =
+                HEALTHY_RPM +
+                static_cast<int>(
+                    degradationLevel * (1450 - HEALTHY_RPM)
+                );
+            break;
+
 
         case FaultType::NONE:
         default:
@@ -126,7 +252,9 @@ void DigitalTwin::updateSensors()
              + RECOVERY_FACTOR * (targetVoltage - voltage);
 
     rpm += rpmNoise(generator)
-         + static_cast<int>(0.10 * (targetRPM - rpm));
+    + static_cast<int>(
+        std::round(0.10 * (targetRPM - rpm))
+      );
 }
 
 SensorData DigitalTwin::generateReading()
@@ -157,4 +285,9 @@ MachineState DigitalTwin::getState() const
 FaultType DigitalTwin::getFaultType() const
 {
     return currentFault;
+}
+
+double DigitalTwin::getDegradationLevel() const
+{
+    return degradationLevel;
 }

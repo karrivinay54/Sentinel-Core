@@ -2,9 +2,11 @@
 
 DatasetRecord::DatasetRecord(
     const SensorData& sensorData,
+    double degradationLevel,
     MachineState machineState,
     FaultType faultType)
     : sensorData(sensorData),
+      degradationLevel(degradationLevel),
       machineState(machineState),
       faultType(faultType)
 {
@@ -13,6 +15,11 @@ DatasetRecord::DatasetRecord(
 SensorData DatasetRecord::getSensorData() const
 {
     return sensorData;
+}
+
+double DatasetRecord::getDegradationLevel() const
+{
+    return degradationLevel;
 }
 
 MachineState DatasetRecord::getMachineState() const

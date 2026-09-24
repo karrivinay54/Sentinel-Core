@@ -35,11 +35,12 @@ void SimulationManager::run()
 
             SensorData reading = twin.generateReading();
 
-            DatasetRecord record(
-                reading,
-                twin.getState(),
-                twin.getFaultType()
-            );
+         DatasetRecord record(
+          reading,
+          twin.getDegradationLevel(),
+          twin.getState(),
+          twin.getFaultType()
+          );
 
             reading.display();
 

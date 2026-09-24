@@ -24,10 +24,11 @@ private:
     double voltage;
     int rpm;
 
-    // Simulation
-    int runningTime;
-    std::time_t simulationStartTime;
-    std::mt19937 generator;
+   // Simulation
+int runningTime;
+double degradationLevel;
+std::time_t simulationStartTime;
+std::mt19937 generator;
 
     // Healthy operating points
     static constexpr double HEALTHY_TEMPERATURE = 36.8;
@@ -49,6 +50,7 @@ private:
     // Internal helpers
     void updateState();
     void updateFault();
+    void updateDegradation();
     void updateTargets();
     void updateSensors();
 
@@ -64,4 +66,5 @@ public:
 
     MachineState getState() const;
     FaultType getFaultType() const;
+    double getDegradationLevel() const;
 };

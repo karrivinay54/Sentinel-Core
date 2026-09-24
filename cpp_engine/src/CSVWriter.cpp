@@ -28,6 +28,7 @@ void CSVWriter::write(const DatasetRecord& record)
              << "Current,"
              << "Voltage,"
              << "RPM,"
+             << "DegradationLevel,"
              << "State,"
              << "FaultType\n";
     }
@@ -40,7 +41,8 @@ void CSVWriter::write(const DatasetRecord& record)
          << data.getVibration() << ","
          << data.getCurrent() << ","
          << data.getVoltage() << ","
-         << data.getRPM() << ",";
+         << data.getRPM() << ","
+         << record.getDegradationLevel() << ",";
 
     // Write Machine State
     switch (record.getMachineState())
