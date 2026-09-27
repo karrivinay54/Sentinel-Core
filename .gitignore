@@ -20,3 +20,7 @@ Thumbs.db
 
 # Generated simulation data
 cpp_engine/data/*.csv
+
+# Generated analytics outputs
+analytics/plots/*.png
+analytics/plots/*.csv
