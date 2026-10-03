@@ -35,10 +35,13 @@ int SimulationConfig::getNumIterations() const
 // Get fault assigned to a machine
 FaultType SimulationConfig::getFaultForMachine(int index) const
 {
-    if (index < 0 || index >= static_cast<int>(faultAssignments.size()))
+    if (faultAssignments.empty())
     {
         return FaultType::NONE;
     }
 
-    return faultAssignments[index];
+    // Cycle through the configured fault scenarios.
+    // This allows multiple machines to share the same
+    // fault scenario while retaining independent baselines.
+    return faultAssignments[index % faultAssignments.size()];
 }

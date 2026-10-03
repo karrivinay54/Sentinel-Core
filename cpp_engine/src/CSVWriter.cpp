@@ -11,15 +11,35 @@ CSVWriter::CSVWriter(const std::string& filename)
 
 void CSVWriter::write(const DatasetRecord& record)
 {
-    // Check if file already exists
+    // Check whether the file exists and whether it contains data
     std::ifstream checkFile(filename);
-    bool fileExists = checkFile.good();
+
+    bool needsHeader = true;
+
+    if (checkFile.good())
+    {
+        checkFile.seekg(0, std::ios::end);
+
+        if (checkFile.tellg() > 0)
+        {
+            needsHeader = false;
+        }
+    }
+
     checkFile.close();
 
+    // Open file in append mode
     std::ofstream file(filename, std::ios::app);
 
-    // Write header only once
-    if (!fileExists)
+    if (!file.is_open())
+    {
+        std::cerr << "Error: Unable to open CSV file: "
+                  << filename << '\n';
+        return;
+    }
+
+    // Write header if file is new or empty
+    if (needsHeader)
     {
         file << "Timestamp,"
              << "MachineID,"
@@ -111,5 +131,6 @@ void CSVWriter::write(const DatasetRecord& record)
     }
 
     file << '\n';
+
     file.close();
 }

@@ -8,21 +8,21 @@
 
 int main()
 {
-    std::remove("cpp_engine/data/sensor_data.csv");
-
     std::vector<FaultType> faults =
-    {
-        FaultType::BEARING_WEAR,
-        FaultType::MISALIGNMENT,
-        FaultType::COOLING_FAILURE
-    };
+{
+    FaultType::NONE,
+    FaultType::BEARING_WEAR,
+    FaultType::MISALIGNMENT,
+    FaultType::COOLING_FAILURE,
+    FaultType::OVERLOAD
+};
 
-    SimulationConfig config(
-        3,
-        "cpp_engine/data/sensor_data.csv",
-        50,
-        faults
-    );
+SimulationConfig config(
+    20,
+    "cpp_engine/data/sensor_data_v2.csv",
+    50,
+    faults
+);
 
     SimulationManager manager(config);
 
