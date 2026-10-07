@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-DATASET_PATH = PROJECT_ROOT / "cpp_engine" / "data" / "sensor_data.csv"
+DATASET_PATH = PROJECT_ROOT / "cpp_engine" / "data" / "sensor_data_v2.csv"
 
 OUTPUT_DIR = PROJECT_ROOT / "analytics" / "plots"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -94,7 +94,7 @@ def main():
     plt.tight_layout()
 
     output_path = (
-        OUTPUT_DIR / "sensor_contribution_by_fault.png"
+        OUTPUT_DIR / "sensor_contribution_by_fault_v2.png"
     )
 
     plt.savefig(output_path, dpi=150)
