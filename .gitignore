@@ -24,3 +24,8 @@ cpp_engine/data/*.csv
 # Generated analytics outputs
 analytics/plots/*.png
 analytics/plots/*.csv
+
+
+# Python generated files
+__pycache__/
+*.py[cod]
