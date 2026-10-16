@@ -16,7 +16,7 @@ MODEL_PATH = (
     PROJECT_ROOT
     / "analytics"
     / "models"
-    / "sentinel_fault_classifier.pkl"
+    / "sentinel_fault_classifier_v5.pkl"
 )
 
 
