@@ -10,6 +10,8 @@ enum class MachineState
     WARNING,
     FAULT,
     CRITICAL,
+    MAINTENANCE,
+    RECOVERY,
     SHUTDOWN
 };
 
@@ -35,6 +37,12 @@ inline std::string toString(MachineState state)
 
     case MachineState::CRITICAL:
         return "CRITICAL";
+
+    case MachineState::MAINTENANCE:
+        return "MAINTENANCE";
+
+    case MachineState::RECOVERY:
+        return "RECOVERY";
 
     case MachineState::SHUTDOWN:
         return "SHUTDOWN";

@@ -48,6 +48,12 @@ private:
     // 0.0 = healthy
     // 1.0 = maximum simulated degradation
     double degradationLevel;
+    // Maintenance and recovery tracking
+    bool maintenanceRequested;
+    int maintenanceDuration;
+    int recoveryDuration;
+    int maintenanceElapsed;
+    int recoveryElapsed;
 
     // Used to generate simulated timestamps
     std::time_t simulationStartTime;
@@ -139,6 +145,11 @@ private:
 
     // Adds noise and moves sensors toward their targets
     void updateSensors();
+    // Maintenance lifecycle
+    void performMaintenance();
+    void updateMaintenance();
+    void updateRecovery();
+    void restoreHealthyBaseline();
 
 
 public:
@@ -158,6 +169,15 @@ public:
     // ============================================================
 
     void update();
+
+    // Operator-authorized maintenance command
+    bool requestMaintenance();
+
+    // Machine identity
+    std::string getMachineID() const;
+
+    // Maintenance status
+    bool isMaintenanceRequested() const;
 
 
     // ============================================================

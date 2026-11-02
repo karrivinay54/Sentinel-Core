@@ -1,5 +1,4 @@
-#ifndef DATASET_RECORD_H
-#define DATASET_RECORD_H
+#pragma once
 
 #include "SensorData.h"
 #include "MachineState.h"
@@ -22,12 +21,7 @@ public:
     );
 
     SensorData getSensorData() const;
-
     double getDegradationLevel() const;
-
     MachineState getMachineState() const;
-
     FaultType getFaultType() const;
 };
-
-#endif

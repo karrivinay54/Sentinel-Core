@@ -37,6 +37,11 @@ DigitalTwin::DigitalTwin(
 
       runningTime(0),
       degradationLevel(0.0),
+      maintenanceRequested(false),
+      maintenanceDuration(5),
+      recoveryDuration(10),
+      maintenanceElapsed(0),
+      recoveryElapsed(0),
 
       simulationStartTime(std::time(nullptr)),
 
@@ -160,26 +165,57 @@ DigitalTwin::DigitalTwin(
 // UPDATE
 // ================================================================
 
+
 void DigitalTwin::update()
 {
     runningTime++;
 
-    // Step 1: Increase degradation
+    // ------------------------------------------------------------
+    // MAINTENANCE PHASE
+    // ------------------------------------------------------------
+
+    if (state == MachineState::MAINTENANCE)
+    {
+        updateMaintenance();
+        return;
+    }
+
+    // ------------------------------------------------------------
+    // RECOVERY PHASE
+    // ------------------------------------------------------------
+
+    if (state == MachineState::RECOVERY)
+    {
+        updateRecovery();
+        return;
+    }
+
+    // ------------------------------------------------------------
+    // HEALTHY CONTROL MACHINES
+    // ------------------------------------------------------------
+
+    if (assignedFault == FaultType::NONE)
+    {
+        degradationLevel = 0.0;
+        state = MachineState::HEALTHY;
+        currentFault = FaultType::NONE;
+
+        updateFaultEffects();
+        updateTargets();
+        updateSensors();
+
+        return;
+    }
+
+    // ------------------------------------------------------------
+    // NORMAL FAULT PROGRESSION
+    // ------------------------------------------------------------
+
     updateDegradation();
-
-    // Step 2: Determine machine state
     updateState();
-
-    // Step 3: Determine currently reported fault
     updateFault();
-
-    // Step 4: Determine physical effect of assigned fault
     updateFaultEffects();
-
-    // Step 5: Calculate sensor targets
     updateTargets();
-
-    // Step 6: Move sensors toward targets and add noise
     updateSensors();
 }
 
@@ -252,7 +288,14 @@ void DigitalTwin::updateState()
 
 void DigitalTwin::updateDegradation()
 {
-    const double DEGRADATION_RATE = 0.02;
+    // NONE is a healthy control, not a degrading machine.
+    if (assignedFault == FaultType::NONE)
+    {
+        degradationLevel = 0.0;
+        return;
+    }
+
+    constexpr double DEGRADATION_RATE = 0.01;
 
     degradationLevel += DEGRADATION_RATE;
 
@@ -260,7 +303,6 @@ void DigitalTwin::updateDegradation()
     {
         degradationLevel = 1.0;
     }
-
 
     std::cout << "[DEGRADATION] Level: "
               << degradationLevel
@@ -292,9 +334,11 @@ void DigitalTwin::updateDegradation()
 // updateFaultEffects() and uses assignedFault.
 // ================================================================
 
+
 void DigitalTwin::updateFault()
 {
-    if (state == MachineState::HEALTHY)
+    if (assignedFault == FaultType::NONE ||
+        state == MachineState::HEALTHY)
     {
         currentFault = FaultType::NONE;
     }
@@ -303,6 +347,7 @@ void DigitalTwin::updateFault()
         currentFault = assignedFault;
     }
 }
+
 
 
 // ================================================================
@@ -700,4 +745,101 @@ FaultType DigitalTwin::getAssignedFault() const
 double DigitalTwin::getDegradationLevel() const
 {
     return degradationLevel;
+}
+
+// ================================================================
+// REQUEST MAINTENANCE
+// ================================================================
+
+bool DigitalTwin::requestMaintenance()
+{
+    // Maintenance is allowed only for critical machines.
+    if (state != MachineState::CRITICAL)
+    {
+        return false;
+    }
+
+    // Prevent duplicate maintenance requests.
+    if (maintenanceRequested)
+    {
+        return false;
+    }
+
+    maintenanceRequested = true;
+    maintenanceElapsed = 0;
+
+    state = MachineState::MAINTENANCE;
+    currentFault = FaultType::NONE;
+
+    std::cout << "[MAINTENANCE] Operator authorized maintenance for "
+              << machineID << "\n";
+
+    return true;
+}
+
+void DigitalTwin::updateMaintenance()
+{
+    maintenanceElapsed++;
+
+    if (maintenanceElapsed >= maintenanceDuration)
+    {
+        state = MachineState::RECOVERY;
+        recoveryElapsed = 0;
+
+        std::cout << "[RECOVERY] Maintenance completed for "
+                  << machineID << "\n";
+    }
+}
+
+void DigitalTwin::updateRecovery()
+{
+    recoveryElapsed++;
+
+    // Gradually restore sensor readings to healthy baseline.
+    updateSensors();
+
+    if (recoveryElapsed >= recoveryDuration)
+    {
+        restoreHealthyBaseline();
+
+        std::cout << "[RECOVERY] Machine "
+                  << machineID
+                  << " has returned to HEALTHY state.\n";
+    }
+}
+
+void DigitalTwin::restoreHealthyBaseline()
+{
+    degradationLevel = 0.0;
+
+    // Clear the previous fault scenario.
+    assignedFault = FaultType::NONE;
+    currentFault = FaultType::NONE;
+
+    // Restore sensor targets.
+    updateFaultEffects();
+    updateTargets();
+
+    // Restore actual sensor values.
+    temperature = baselineTemperature;
+    vibration = baselineVibration;
+    current = baselineCurrent;
+    voltage = baselineVoltage;
+    rpm = baselineRPM;
+
+    state = MachineState::HEALTHY;
+
+    maintenanceRequested = false;
+    maintenanceElapsed = 0;
+    recoveryElapsed = 0;
+}
+
+std::string DigitalTwin::getMachineID() const
+{
+    return machineID;
+}
+
+bool DigitalTwin::isMaintenanceRequested() const
+{
+    return maintenanceRequested;
 }

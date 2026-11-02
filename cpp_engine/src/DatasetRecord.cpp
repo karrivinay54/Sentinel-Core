@@ -4,7 +4,8 @@ DatasetRecord::DatasetRecord(
     const SensorData& sensorData,
     double degradationLevel,
     MachineState machineState,
-    FaultType faultType)
+    FaultType faultType
+)
     : sensorData(sensorData),
       degradationLevel(degradationLevel),
       machineState(machineState),
