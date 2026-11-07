@@ -18,6 +18,7 @@ DigitalTwin::DigitalTwin(
 )
     : machineID(machineID),
       state(MachineState::HEALTHY),
+      originalFault(fault),
       assignedFault(fault),
       currentFault(FaultType::NONE),
 
@@ -737,6 +738,11 @@ FaultType DigitalTwin::getAssignedFault() const
     return assignedFault;
 }
 
+FaultType DigitalTwin::getOriginalFault() const
+{
+    return originalFault;
+}
+
 
 // ================================================================
 // GET DEGRADATION LEVEL
@@ -783,6 +789,18 @@ void DigitalTwin::updateMaintenance()
 
     if (maintenanceElapsed >= maintenanceDuration)
     {
+        // Clear the previous fault scenario.
+        assignedFault = FaultType::NONE;
+        currentFault = FaultType::NONE;
+
+        // Reset machine degradation.
+        degradationLevel = 0.0;
+
+        // Restore healthy sensor targets.
+        updateFaultEffects();
+        updateTargets();
+
+        // Begin gradual sensor recovery.
         state = MachineState::RECOVERY;
         recoveryElapsed = 0;
 

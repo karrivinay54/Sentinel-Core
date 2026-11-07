@@ -50,7 +50,8 @@ void CSVWriter::write(const DatasetRecord& record)
              << "RPM,"
              << "DegradationLevel,"
              << "State,"
-             << "FaultType\n";
+             << "FaultType,"
+             << "ActiveFault\n";
     }
 
     const SensorData& data = record.getSensorData();
@@ -91,6 +92,14 @@ void CSVWriter::write(const DatasetRecord& record)
             file << "CRITICAL";
             break;
 
+        case MachineState::MAINTENANCE:
+            file << "MAINTENANCE";
+            break;
+
+        case MachineState::RECOVERY:
+            file << "RECOVERY";
+            break;
+
         case MachineState::SHUTDOWN:
             file << "SHUTDOWN";
             break;
@@ -129,6 +138,37 @@ void CSVWriter::write(const DatasetRecord& record)
             file << "UNKNOWN";
             break;
     }
+
+    file << ",";
+
+    // Write currently active fault
+    switch (record.getActiveFault())
+    {
+        case FaultType::NONE:
+            file << "NONE";
+            break;
+
+        case FaultType::BEARING_WEAR:
+            file << "BEARING_WEAR";
+            break;
+
+        case FaultType::MISALIGNMENT:
+            file << "MISALIGNMENT";
+            break;
+
+        case FaultType::COOLING_FAILURE:
+            file << "COOLING_FAILURE";
+            break;
+
+        case FaultType::OVERLOAD:
+            file << "OVERLOAD";
+            break;
+
+        default:
+            file << "UNKNOWN";
+            break;
+    }
+
 
     file << '\n';
 
