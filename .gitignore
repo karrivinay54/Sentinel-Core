@@ -20,12 +20,37 @@ Thumbs.db
 
 # Generated simulation data
 cpp_engine/data/*.csv
+!cpp_engine/data/sensor_data_v5.csv
 
-# Generated analytics outputs
+# Local backups
+cpp_engine/data/backups/
+
+# Generated prediction runs
+analytics/reports/sentinel_predictions_*.csv
+analytics/reports/integration_test_predictions.csv
+analytics/reports/test_predictions.csv
+analytics/reports/manual_test_predictions.csv
+
+# Generated analytics plots
 analytics/plots/*.png
 analytics/plots/*.csv
-
 
 # Python generated files
 __pycache__/
 *.py[cod]
+
+# Raw Paderborn dataset
+datasets/paderborn/raw/
+datasets/paderborn/**/*.mat
+datasets/paderborn/**/*.rar
+
+# Dataset extraction errors
+datasets/paderborn/processed/paderborn_extraction_errors.csv
+
+
+# Local dashboard backups
+dashboard/*.backup
+dashboard/*.pre_freeze_backup
+
+# Temporary reviewed dashboard downloads
+app_sentinel_dashboard_reviewed*.py
