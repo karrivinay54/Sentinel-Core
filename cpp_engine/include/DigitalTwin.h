@@ -21,12 +21,16 @@ private:
     // Current machine operating state
     MachineState state;
 
-    // Fault scenario assigned to this machine
+    // Original fault scenario assigned at machine creation.
+    // Never changes during the simulation.
+    FaultType originalFault;
+
+    // Current fault scenario used by the simulation.
+    // Can be cleared after maintenance.
     FaultType assignedFault;
 
-    // Fault currently reported by the machine state logic
+    // Fault currently reported by the machine state logic.
     FaultType currentFault;
-
 
     // ============================================================
     // CURRENT SENSOR VALUES
@@ -146,7 +150,6 @@ private:
     // Adds noise and moves sensors toward their targets
     void updateSensors();
     // Maintenance lifecycle
-    void performMaintenance();
     void updateMaintenance();
     void updateRecovery();
     void restoreHealthyBaseline();
@@ -194,8 +197,8 @@ public:
     MachineState getState() const;
 
     FaultType getFaultType() const;
-
     FaultType getAssignedFault() const;
+    FaultType getOriginalFault() const;
 
     double getDegradationLevel() const;
 

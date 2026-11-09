@@ -4,6 +4,8 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <algorithm>
+#include <cctype>
 #include <string>
 
 SimulationManager::SimulationManager(const SimulationConfig& config)
@@ -43,7 +45,8 @@ void SimulationManager::run()
                 reading,
                 twin.getDegradationLevel(),
                 twin.getState(),
-                twin.getAssignedFault()
+                twin.getOriginalFault(),
+                twin.getFaultType()
             );
 
             reading.display();
@@ -77,6 +80,17 @@ void SimulationManager::run()
 
             std::string selectedMachine;
             std::getline(std::cin >> std::ws, selectedMachine);
+
+            // Convert machine ID to uppercase.
+            std::transform(
+                selectedMachine.begin(),
+                selectedMachine.end(),
+                selectedMachine.begin(),
+                [](unsigned char c)
+                {
+                    return static_cast<char>(std::toupper(c));
+                }
+            );
 
             if (!selectedMachine.empty())
             {

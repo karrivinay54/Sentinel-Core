@@ -1,0 +1,78 @@
+{
+  "dataset": "Paderborn Bearing DataCenter",
+  "evaluation": "LeaveOneGroupOut by bearing_id",
+  "recordings": 720,
+  "distinct_bearings": 9,
+  "features": [
+    "std",
+    "rms",
+    "peak_abs",
+    "peak_to_peak",
+    "crest_factor",
+    "mean_absolute",
+    "skewness",
+    "kurtosis"
+  ],
+  "labels": [
+    "HEALTHY",
+    "INNER_RACE_FAULT",
+    "OUTER_RACE_FAULT"
+  ],
+  "overall_out_of_fold_accuracy": 0.3902777777777778,
+  "classification_report": {
+    "HEALTHY": {
+      "precision": 0.6652719665271967,
+      "recall": 0.6625,
+      "f1-score": 0.6638830897703548,
+      "support": 240.0
+    },
+    "INNER_RACE_FAULT": {
+      "precision": 0.16896551724137931,
+      "recall": 0.20416666666666666,
+      "f1-score": 0.18490566037735848,
+      "support": 240.0
+    },
+    "OUTER_RACE_FAULT": {
+      "precision": 0.38219895287958117,
+      "recall": 0.30416666666666664,
+      "f1-score": 0.33874709976798145,
+      "support": 240.0
+    },
+    "accuracy": 0.3902777777777778,
+    "macro avg": {
+      "precision": 0.40547881221605236,
+      "recall": 0.3902777777777778,
+      "f1-score": 0.39584528330523155,
+      "support": 720.0
+    },
+    "weighted avg": {
+      "precision": 0.40547881221605236,
+      "recall": 0.3902777777777778,
+      "f1-score": 0.3958452833052316,
+      "support": 720.0
+    }
+  },
+  "confusion_matrix_labels_order": [
+    "HEALTHY",
+    "INNER_RACE_FAULT",
+    "OUTER_RACE_FAULT"
+  ],
+  "confusion_matrix": [
+    [
+      159,
+      81,
+      0
+    ],
+    [
+      73,
+      49,
+      118
+    ],
+    [
+      7,
+      160,
+      73
+    ]
+  ],
+  "warning": "Preliminary result on nine selected bearings only; not proof of generalization to industrial machines."
+}

@@ -1,0 +1,17 @@
+Overall out-of-fold accuracy: 0.3903
+
+                  precision    recall  f1-score   support
+
+         HEALTHY     0.6653    0.6625    0.6639       240
+INNER_RACE_FAULT     0.1690    0.2042    0.1849       240
+OUTER_RACE_FAULT     0.3822    0.3042    0.3387       240
+
+        accuracy                         0.3903       720
+       macro avg     0.4055    0.3903    0.3958       720
+    weighted avg     0.4055    0.3903    0.3958       720
+
+Confusion matrix (rows=true, columns=predicted):
+                  HEALTHY  INNER_RACE_FAULT  OUTER_RACE_FAULT
+HEALTHY               159                81                 0
+INNER_RACE_FAULT       73                49               118
+OUTER_RACE_FAULT        7               160                73
